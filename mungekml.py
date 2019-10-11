@@ -32,6 +32,13 @@ def createNewTree(placemark):
 def main():
 	files = sys.argv[1:]
 	for filename in files:
+		if 'house' in filename.lower():
+			chamber = 'house'
+		elif 'senate' in filename.lower():
+			chamber = 'senate'
+		else:
+			raise StandardError('Could not determine house/senate for %s' % filename)
+
 		tree = ET.parse(filename)
 		root = tree.getroot()
 		for doc in root:
@@ -48,11 +55,11 @@ def main():
 					raise StandardError('could not determine district for ' + str(placemark))
 
 				name_elt = ET.Element('name')
-				name_elt.text = 'House District %d' % district
+				name_elt.text = '%s District %d' % (chamber.title(), district)
 				placemark.append(name_elt)
 
 				newtree = createNewTree(placemark)
-				filename = '%s/house-district-%d.kml' % (outdir, district)
+				filename = '%s/%s-district-%d.kml' % (outdir, chamber, district)
 				newtree.write(filename, encoding='utf-8')
 				print 'wrote', filename
 

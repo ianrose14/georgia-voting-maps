@@ -15,37 +15,65 @@
         height: 90%;
         padding: 0;
       }
+
+      .horiz-spacer {
+        display: inline-block;
+      }
     </style>
 </head>
 <body>
 	<div id="controllers">
 		<label for="picker">House District</label>
-		<select id="picker"></select>
-		<button id="submit" disabled>Go!</button>
+		<select id="house_picker"></select>
+		<button id="house_submit" disabled>Go!</button>
+    <div class="horiz-spacer" style="width: 100px"></div>
+    <label for="senate_picker">Senate District</label>
+    <select id="senate_picker"></select>
+    <button id="senate_submit" disabled>Go!</button>
 	</div>
 
 	<div id="map_canvas"></div>
 <script type="text/javascript">
+  var activeLayer = null;
   function initialize() {
-  	let picker = document.getElementById('picker');
-  	for (let i = 1; i <= 180; i++) {  // 180 house districts
-  		let elt = document.createElement('option');
-  		elt.value = i;
-  		elt.innerText = i;
-  		picker.appendChild(elt);
-  	}
-
     let map = new google.maps.Map(document.getElementById("map_canvas"), {zoom: 10});
 
-  	document.getElementById('submit').addEventListener('click', (e) => {
-  		loadKmlLayer(map, 'house-district-' + picker.value + '.kmz')
-  	})
-  	document.getElementById('submit').disabled = false;
+    // HOUSE
+    let house_picker = document.getElementById('house_picker');
+    for (let i = 1; i <= 180; i++) {  // 180 house districts
+      let elt = document.createElement('option');
+      elt.value = i;
+      elt.innerText = i;
+      house_picker.appendChild(elt);
+    }
+
+    document.getElementById('house_submit').addEventListener('click', (e) => {
+      loadKmlLayer(map, 'house-district-' + house_picker.value + '.kmz')
+    })
+    document.getElementById('house_submit').disabled = false;
+
+    // SENATE
+    let senate_picker = document.getElementById('senate_picker');
+    for (let i = 1; i <= 56; i++) {  // 56 senate districts
+      let elt = document.createElement('option');
+      elt.value = i;
+      elt.innerText = i;
+      senate_picker.appendChild(elt);
+    }
+
+    document.getElementById('senate_submit').addEventListener('click', (e) => {
+      loadKmlLayer(map, 'senate-district-' + senate_picker.value + '.kmz')
+    })
+    document.getElementById('senate_submit').disabled = false;
   }
 
   function loadKmlLayer(map, filename) {
     let src = 'https://storage.googleapis.com/georgia-maps/geo/' + filename;
-  	let kmlLayer = new google.maps.KmlLayer(src, {
+    if (activeLayer) {
+      activeLayer.setMap(null);
+      activeLayer = null;
+    }
+  	activeLayer = new google.maps.KmlLayer(src, {
   	  suppressInfoWindows: false,
   	  preserveViewport: false,
   	  map: map
