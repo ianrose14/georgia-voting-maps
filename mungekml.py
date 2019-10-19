@@ -32,10 +32,12 @@ def createNewTree(placemark):
 def main():
 	files = sys.argv[1:]
 	for filename in files:
-		if 'house' in filename.lower():
-			chamber = 'house'
-		elif 'senate' in filename.lower():
-			chamber = 'senate'
+		if 'georgia_house' in filename.lower():
+			chamber = 'GA House'
+		elif 'georgia_senate' in filename.lower():
+			chamber = 'GA Senate'
+		elif 'us_house' in filename.lower():
+			chamber = 'US House'
 		else:
 			raise StandardError('Could not determine house/senate for %s' % filename)
 
@@ -46,20 +48,29 @@ def main():
 				raise StandardError('expected Document, got tag="%s"' % doc.tag)
 
 			for placemark in doc.findall('Folder/Placemark'):
-				district = None
-				for simpledata in placemark.iter('SimpleData'):
-					if simpledata.attrib.get('name') == 'DISTRICT':
-						district = int(simpledata.text)
+				if placemark.find('name') is not None:
+					district = int(placemark.find('name').text.split('-')[-1])
+				else:
+					district = None
+					for simpledata in placemark.iter('SimpleData'):
+						if simpledata.attrib.get('name') == 'DISTRICT':
+							district = int(simpledata.text)
 
-				if not district:
-					raise StandardError('could not determine district for ' + str(placemark))
+					if not district:
+						raise StandardError('could not determine district for ' + str(placemark))
 
-				name_elt = ET.Element('name')
-				name_elt.text = '%s District %d' % (chamber.title(), district)
-				placemark.append(name_elt)
+					name_elt = ET.Element('name')
+					name_elt.text = '%s District %d' % (chamber, district)
+					placemark.append(name_elt)
+
+				if placemark.find('description') is None:
+					desc_elt = ET.Element('description')
+					desc_elt.text = '&nbsp;'#%s District %d' % (chamber, district)
+					placemark.append(desc_elt)
+
 
 				newtree = createNewTree(placemark)
-				filename = '%s/%s-district-%d.kml' % (outdir, chamber, district)
+				filename = '%s/%s-district-%d.kml' % (outdir, chamber.lower().replace(' ', '-'), district)
 				newtree.write(filename, encoding='utf-8')
 				print 'wrote', filename
 

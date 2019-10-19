@@ -1,5 +1,7 @@
 <html>
 <head>
+  <link rel="stylesheet" href="static/css/bootstrap.min.css">
+  <link rel="stylesheet" href="static/css/bootstrap-grid.min.css">
     <style>
       #controllers {
       	border: 1px solid #555;
@@ -19,18 +21,48 @@
       .horiz-spacer {
         display: inline-block;
       }
+
+      .layout-block {
+        display: inline-block;
+      }
+
+      button {
+        border-radius: 5px;
+        margin-left: 10px;
+      }
     </style>
 </head>
 <body>
 	<div id="controllers">
-		<label for="picker">House District</label>
-		<select id="house_picker"></select>
-		<button id="house_submit" disabled>Go!</button>
-    <div class="horiz-spacer" style="width: 100px"></div>
-    <label for="senate_picker">Senate District</label>
-    <select id="senate_picker"></select>
-    <button id="senate_submit" disabled>Go!</button>
-	</div>
+    <div class="container">
+      <div class="row">
+        <div class="col"><h4>Georgia (State)</h4></div>
+        <div class="col"><h4>U.S. (Federal)</h4></div>
+      </div>
+      <div class="row">
+        <div class="col-sm">
+          <label for="ga_senate_picker">Senate District</label>
+          <select id="ga_senate_picker"></select>
+          <button id="ga_senate_submit" disabled>Go!</button>
+        </div>
+        <div class="col-sm">
+          <label for="us_house_picker">House District</label>
+        <select id="us_house_picker"></select>
+        <button id="us_house_submit" disabled>Go!</button>
+        </div>
+      </div>
+      <div class="row">
+        <div class="col-sm">
+          <label for="ga_house_picker">House District</label>
+          <select id="ga_house_picker"></select>
+          <button id="ga_house_submit" disabled>Go!</button>
+        </div>
+        <div class="col-sm">
+        </div>
+      </div>
+    </div>
+  </div>
+
 
 	<div id="map_canvas"></div>
 <script type="text/javascript">
@@ -38,33 +70,47 @@
   function initialize() {
     let map = new google.maps.Map(document.getElementById("map_canvas"), {zoom: 10});
 
-    // HOUSE
-    let house_picker = document.getElementById('house_picker');
-    for (let i = 1; i <= 180; i++) {  // 180 house districts
+    // GA HOUSE
+    let ga_house_picker = document.getElementById('ga_house_picker');
+    for (let i = 1; i <= 180; i++) {  // 180 state house districts
       let elt = document.createElement('option');
       elt.value = i;
       elt.innerText = i;
-      house_picker.appendChild(elt);
+      ga_house_picker.appendChild(elt);
     }
 
-    document.getElementById('house_submit').addEventListener('click', (e) => {
-      loadKmlLayer(map, 'house-district-' + house_picker.value + '.kmz')
+    document.getElementById('ga_house_submit').addEventListener('click', (e) => {
+      loadKmlLayer(map, 'ga-house-district-' + ga_house_picker.value + '.kmz')
     })
-    document.getElementById('house_submit').disabled = false;
+    document.getElementById('ga_house_submit').disabled = false;
 
-    // SENATE
-    let senate_picker = document.getElementById('senate_picker');
-    for (let i = 1; i <= 56; i++) {  // 56 senate districts
+    // GA SENATE
+    let ga_senate_picker = document.getElementById('ga_senate_picker');
+    for (let i = 1; i <= 56; i++) {  // 56 state senate districts
       let elt = document.createElement('option');
       elt.value = i;
       elt.innerText = i;
-      senate_picker.appendChild(elt);
+      ga_senate_picker.appendChild(elt);
     }
 
-    document.getElementById('senate_submit').addEventListener('click', (e) => {
-      loadKmlLayer(map, 'senate-district-' + senate_picker.value + '.kmz')
+    document.getElementById('ga_senate_submit').addEventListener('click', (e) => {
+      loadKmlLayer(map, 'ga-senate-district-' + ga_senate_picker.value + '.kmz')
     })
-    document.getElementById('senate_submit').disabled = false;
+    document.getElementById('ga_senate_submit').disabled = false;
+
+    // US HOUSE
+    let us_house_picker = document.getElementById('us_house_picker');
+    for (let i = 1; i <= 14; i++) {  // 14 US house districts
+      let elt = document.createElement('option');
+      elt.value = i;
+      elt.innerText = i;
+      us_house_picker.appendChild(elt);
+    }
+
+    document.getElementById('us_house_submit').addEventListener('click', (e) => {
+      loadKmlLayer(map, 'us-house-district-' + us_house_picker.value + '.kmz')
+    })
+    document.getElementById('us_house_submit').disabled = false;
   }
 
   function loadKmlLayer(map, filename) {
