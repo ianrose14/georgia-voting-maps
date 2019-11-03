@@ -68,7 +68,10 @@
 <script type="text/javascript">
   var activeLayer = null;
   function initialize() {
-    let map = new google.maps.Map(document.getElementById("map_canvas"), {zoom: 10});
+    let map = new google.maps.Map(document.getElementById("map_canvas"), {
+      center: {lat: 32.1656, lng: -82.9001},
+      zoom: 7
+    });
 
     // GA HOUSE
     let ga_house_picker = document.getElementById('ga_house_picker');
