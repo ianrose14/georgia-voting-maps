@@ -79,6 +79,13 @@ window['_fs_namespace'] = 'FS';
         <div class="col-sm">
         </div>
       </div>
+      <div class="row">
+        <div class="col-sm">
+          <label for="us_house_picker">PSC District <a href="https://georgia.gov/agencies/public-service-commission" target="_blank">?</a></label>
+        <select id="psc_picker"></select>
+        <button id="psc_submit" disabled>Go!</button>
+        </div>
+      </div>
     </div>
   </div>
 
@@ -119,6 +126,20 @@ window['_fs_namespace'] = 'FS';
       loadKmlLayer(map, 'ga-senate-district-' + ga_senate_picker.value + '.kmz')
     })
     document.getElementById('ga_senate_submit').disabled = false;
+
+    // GA PSC
+    let psc_picker = document.getElementById('psc_picker');
+    for (let i = 1; i <= 5; i++) {  // 5 PSC districts
+      let elt = document.createElement('option');
+      elt.value = i;
+      elt.innerText = i;
+      psc_picker.appendChild(elt);
+    }
+
+    document.getElementById('psc_submit').addEventListener('click', (e) => {
+      loadKmlLayer(map, 'psc-district-' + psc_picker.value + '.kmz')
+    })
+    document.getElementById('psc_submit').disabled = false;
 
     // US HOUSE
     let us_house_picker = document.getElementById('us_house_picker');
